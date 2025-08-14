@@ -69,7 +69,6 @@ export default function SearchPage() {
 
       {/* Content */}
       <div className="max-w-md mx-auto p-4">
-        {/* Popular Users - removed demo, show hint */}
         {!searchQuery && (
           <div className="mb-6 text-center text-gray-600 text-sm">Введите запрос, чтобы найти пользователей</div>
         )}

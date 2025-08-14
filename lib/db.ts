@@ -1,4 +1,4 @@
-import type { Visibility } from "@/lib/types"
+import { Visibility } from "@/lib/types"
 
 // Simple in-memory stores for MVP
 const videos: any[] = []
@@ -11,7 +11,7 @@ const reports: { videoId: string; reporterId: string; reason: string; createdAt:
 
 function ensureUser(userId: string) {
 	if (!users.has(userId)) users.set(userId, { id: userId, username: userId, displayName: userId, avatar: undefined, bio: "", createdAt: new Date().toISOString() })
-	if (!settings.has(userId)) settings.set(userId, { privateAccount: false, showActivity: true, defaultVisibility: "FRIENDS" as Visibility })
+	if (!settings.has(userId)) settings.set(userId, { privateAccount: false, showActivity: true, defaultVisibility: Visibility.FRIENDS })
 }
 
 export const db = {

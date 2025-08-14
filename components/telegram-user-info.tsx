@@ -30,8 +30,8 @@ export function TelegramUserInfo() {
             <User className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-gray-900">Демо режим</p>
-            <p className="text-sm text-gray-600">Откройте в Telegram для полного функционала</p>
+            <p className="font-semibold text-gray-900">Гостевой режим</p>
+            <p className="text-sm text-gray-600">Откройте в Telegram для полного функционала или продолжайте как гость</p>
           </div>
         </div>
       </Card>
@@ -46,7 +46,7 @@ export function TelegramUserInfo() {
         <div className="relative">
           {user.photo_url ? (
             <img
-              src={user.photo_url || "/placeholder.svg"}
+              src={user.photo_url}
               alt={displayName}
               className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
             />
