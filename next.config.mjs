@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    optimizeCss: true,
-  },
   
   // Enable static optimization
   output: 'standalone',
