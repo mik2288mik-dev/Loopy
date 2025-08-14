@@ -20,62 +20,9 @@ interface ActivityItem {
 
 export default function ActivityPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("activity")
   const [filter, setFilter] = useState("all")
 
-  // Mock activity data
-  const activities: ActivityItem[] = [
-    {
-      id: 1,
-      type: "like",
-      user: "Максим П.",
-      timestamp: "2 минуты назад",
-      videoThumbnail: "/dancing-person-preview.png",
-      isRead: false,
-    },
-    {
-      id: 2,
-      type: "comment",
-      user: "Елена М.",
-      content: "Потрясающие движения! 🔥",
-      timestamp: "15 минут назад",
-      videoThumbnail: "/dancing-person-preview.png",
-      isRead: false,
-    },
-    {
-      id: 3,
-      type: "follow",
-      user: "Дмитрий Л.",
-      timestamp: "1 час назад",
-      isRead: true,
-    },
-    {
-      id: 4,
-      type: "like",
-      user: "Анна К.",
-      timestamp: "2 часа назад",
-      videoThumbnail: "/cooking-preview.png",
-      isRead: true,
-    },
-    {
-      id: 5,
-      type: "comment",
-      user: "Игорь С.",
-      content: "Где такой рецепт взял?",
-      timestamp: "3 часа назад",
-      videoThumbnail: "/cooking-preview.png",
-      isRead: true,
-    },
-    {
-      id: 6,
-      type: "mention",
-      user: "Мария В.",
-      content: "Посмотри это видео!",
-      timestamp: "5 часов назад",
-      videoThumbnail: "/vibrant-sunset-preview.png",
-      isRead: true,
-    },
-  ]
+  const activities: ActivityItem[] = []
 
   const filteredActivities = activities.filter((activity) => {
     if (filter === "all") return true
@@ -110,15 +57,6 @@ export default function ActivityPage() {
         return "упомянул вас в комментарии"
       default:
         return ""
-    }
-  }
-
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab)
-    if (tab === "home") {
-      router.push("/")
-    } else if (tab === "profile") {
-      router.push("/profile")
     }
   }
 
@@ -177,19 +115,12 @@ export default function ActivityPage() {
               <Heart className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Нет активности</h3>
-            <p className="text-gray-600 text-sm">
-              Здесь будут отображаться уведомления о взаимодействиях с вашим контентом
-            </p>
+            <p className="text-gray-600 text-sm">Здесь будут отображаться уведомления о взаимодействиях с вашим контентом</p>
           </div>
         ) : (
           <div className="space-y-3">
             {filteredActivities.map((activity) => (
-              <Card
-                key={activity.id}
-                className={`p-4 cursor-pointer hover:shadow-md transition-shadow ${
-                  !activity.isRead ? "bg-loopy-primary/5 border-loopy-primary/20" : "bg-white"
-                }`}
-              >
+              <Card key={activity.id} className={`p-4 cursor-pointer hover:shadow-md transition-shadow ${!activity.isRead ? "bg-loopy-primary/5 border-loopy-primary/20" : "bg-white"}`}>
                 <div className="flex items-start gap-3">
                   {/* User Avatar */}
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center flex-shrink-0">
@@ -201,14 +132,9 @@ export default function ActivityPage() {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <p className="text-sm text-gray-900">
-                          <span className="font-semibold">{activity.user}</span>{" "}
-                          <span className="text-gray-600">{getActivityText(activity)}</span>
+                          <span className="font-semibold">{activity.user}</span> <span className="text-gray-600">{getActivityText(activity)}</span>
                         </p>
-                        {activity.content && (
-                          <p className="text-sm text-gray-700 mt-1 bg-gray-50 rounded-lg px-3 py-2">
-                            "{activity.content}"
-                          </p>
-                        )}
+                        {activity.content && <p className="text-sm text-gray-700 mt-1 bg-gray-50 rounded-lg px-3 py-2">"{activity.content}"</p>}
                         <p className="text-xs text-gray-500 mt-2">{activity.timestamp}</p>
                       </div>
 
@@ -220,11 +146,7 @@ export default function ActivityPage() {
                   {/* Video Thumbnail */}
                   {activity.videoThumbnail && (
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 relative group">
-                      <img
-                        src={activity.videoThumbnail || "/placeholder.svg"}
-                        alt="Video thumbnail"
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={activity.videoThumbnail || "/placeholder.svg"} alt="Video thumbnail" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Play className="w-4 h-4 text-white" />
                       </div>
@@ -238,7 +160,7 @@ export default function ActivityPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      <BottomNavigation />
     </div>
   )
 }

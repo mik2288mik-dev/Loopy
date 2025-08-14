@@ -10,65 +10,24 @@ import { useRouter } from "next/navigation"
 
 export default function ProfilePage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("profile")
   const [profileTab, setProfileTab] = useState("videos")
 
-  // Mock user data
+  // TODO: fetch current user from API/Telegram
   const currentUser = {
     id: "1",
-    username: "anna_k",
-    displayName: "Анна К.",
-    bio: "Танцую, создаю контент, вдохновляю! 💃\nМосква | Хореограф | DM для коллабораций",
-    avatar: "/dancing-person-preview.png",
-    isVerified: true,
-    followersCount: 12500,
-    followingCount: 847,
-    videosCount: 156,
+    username: "user",
+    displayName: "Пользователь",
+    avatar: undefined,
+    isVerified: false,
+    followersCount: 0,
+    followingCount: 0,
+    videosCount: 0,
     isOwnProfile: true,
   }
 
-  // Mock user videos
-  const userVideos = [
-    {
-      id: 1,
-      src: "/colorful-dance.png",
-      poster: "/dancing-person-preview.png",
-      likes: 142,
-      comments: 23,
-      views: 1250,
-      timestamp: "2 дня назад",
-    },
-    {
-      id: 2,
-      src: "/colorful-dance.png",
-      poster: "/dancing-person-preview.png",
-      likes: 89,
-      comments: 12,
-      views: 890,
-      timestamp: "5 дней назад",
-    },
-    {
-      id: 3,
-      src: "/colorful-dance.png",
-      poster: "/dancing-person-preview.png",
-      likes: 256,
-      comments: 45,
-      views: 2100,
-      timestamp: "1 неделю назад",
-    },
-    {
-      id: 4,
-      src: "/colorful-dance.png",
-      poster: "/dancing-person-preview.png",
-      likes: 178,
-      comments: 31,
-      views: 1680,
-      timestamp: "2 недели назад",
-    },
-  ]
-
-  const likedVideos = userVideos.slice(0, 2)
-  const savedVideos = userVideos.slice(1, 3)
+  const userVideos: any[] = []
+  const likedVideos: any[] = []
+  const savedVideos: any[] = []
 
   const handleVideoClick = (videoId: number) => {
     console.log("Open video:", videoId)
@@ -137,16 +96,10 @@ export default function ProfilePage() {
               variant="ghost"
               onClick={() => setProfileTab("videos")}
               className={`flex-1 py-4 rounded-none transition-all duration-300 ${
-                profileTab === "videos"
-                  ? "text-loopy-primary bg-loopy-primary/5"
-                  : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
+                profileTab === "videos" ? "text-loopy-primary bg-loopy-primary/5" : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
               }`}
             >
-              <div
-                className={`p-2 rounded-full mr-2 transition-all duration-300 ${
-                  profileTab === "videos" ? "bg-loopy-primary/20" : "bg-gray-100"
-                }`}
-              >
+              <div className={`p-2 rounded-full mr-2 transition-all duration-300 ${profileTab === "videos" ? "bg-loopy-primary/20" : "bg-gray-100"}`}>
                 <Play className="w-4 h-4" />
               </div>
               Видео
@@ -156,16 +109,10 @@ export default function ProfilePage() {
               variant="ghost"
               onClick={() => setProfileTab("liked")}
               className={`flex-1 py-4 rounded-none transition-all duration-300 ${
-                profileTab === "liked"
-                  ? "text-loopy-primary bg-loopy-primary/5"
-                  : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
+                profileTab === "liked" ? "text-loopy-primary bg-loopy-primary/5" : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
               }`}
             >
-              <div
-                className={`p-2 rounded-full mr-2 transition-all duration-300 ${
-                  profileTab === "liked" ? "bg-loopy-primary/20" : "bg-gray-100"
-                }`}
-              >
+              <div className={`p-2 rounded-full mr-2 transition-all duration-300 ${profileTab === "liked" ? "bg-loopy-primary/20" : "bg-gray-100"}`}>
                 <Heart className="w-4 h-4" />
               </div>
               Понравилось
@@ -175,16 +122,10 @@ export default function ProfilePage() {
               variant="ghost"
               onClick={() => setProfileTab("saved")}
               className={`flex-1 py-4 rounded-none transition-all duration-300 ${
-                profileTab === "saved"
-                  ? "text-loopy-primary bg-loopy-primary/5"
-                  : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
+                profileTab === "saved" ? "text-loopy-primary bg-loopy-primary/5" : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/5"
               }`}
             >
-              <div
-                className={`p-2 rounded-full mr-2 transition-all duration-300 ${
-                  profileTab === "saved" ? "bg-loopy-primary/20" : "bg-gray-100"
-                }`}
-              >
+              <div className={`p-2 rounded-full mr-2 transition-all duration-300 ${profileTab === "saved" ? "bg-loopy-primary/20" : "bg-gray-100"}`}>
                 <Bookmark className="w-4 h-4" />
               </div>
               Сохраненное
@@ -197,7 +138,7 @@ export default function ProfilePage() {
       <UserVideoGrid videos={getVideosForTab()} onVideoClick={handleVideoClick} />
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNavigation />
     </div>
   )
 }

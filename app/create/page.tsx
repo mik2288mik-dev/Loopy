@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -20,6 +20,26 @@ export default function CreatePage() {
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Camera recording state
+  const [isRecording, setIsRecording] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recordedChunksRef = useRef<Blob[]>([])
+  const videoPreviewRef = useRef<HTMLVideoElement>(null)
+
+  // Preview URL for selected/recorded file
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  useEffect(() => {
+    if (videoFile) {
+      const url = URL.createObjectURL(videoFile)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    } else {
+      setPreviewUrl(null)
+    }
+  }, [videoFile])
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file && file.type.startsWith("video/")) {
@@ -32,6 +52,115 @@ export default function CreatePage() {
     }
   }
 
+  const requestCamera = async () => {
+    try {
+      setCameraError(null)
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true })
+      mediaStreamRef.current = stream
+      if (videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = stream
+        await videoPreviewRef.current.play()
+      }
+    } catch (err: any) {
+      const message = err?.message || "Не удалось получить доступ к камере"
+      setCameraError(message)
+      showAlert(message)
+    }
+  }
+
+  const startRecording = async () => {
+    if (!("MediaRecorder" in window)) {
+      // Fallback to native camera capture via file input
+      fileInputRef.current?.click()
+      return
+    }
+    if (!mediaStreamRef.current) {
+      await requestCamera()
+    }
+    const stream = mediaStreamRef.current
+    if (!stream) return
+
+    try {
+      recordedChunksRef.current = []
+      const options: MediaRecorderOptions = { mimeType: getSupportedMimeType() }
+      const recorder = new MediaRecorder(stream, options)
+      mediaRecorderRef.current = recorder
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) recordedChunksRef.current.push(e.data)
+      }
+      recorder.onstop = async () => {
+        const blob = new Blob(recordedChunksRef.current, { type: recorder.mimeType || "video/webm" })
+        const file = new File([blob], `recording-${Date.now()}.webm`, { type: blob.type })
+        setVideoFile(file)
+        setStep("edit")
+        hapticFeedback("success")
+      }
+
+      recorder.start()
+      setIsRecording(true)
+      hapticFeedback("light")
+    } catch (err: any) {
+      const message = err?.message || "Ошибка при начале записи"
+      setCameraError(message)
+      showAlert(message)
+    }
+  }
+
+  const stopRecording = () => {
+    const recorder = mediaRecorderRef.current
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop()
+      setIsRecording(false)
+    }
+    // Do not stop stream yet to allow preview; will be stopped on unmount or when leaving record step
+  }
+
+  const getSupportedMimeType = () => {
+    const types = [
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm",
+      "video/mp4;codecs=h264,aac",
+      "video/mp4",
+    ]
+    for (const type of types) {
+      if ((window as any).MediaRecorder && MediaRecorder.isTypeSupported(type)) return type
+    }
+    return "video/webm"
+  }
+
+  useEffect(() => {
+    // Manage Telegram main button according to step and inputs
+    if (step === "edit" && videoFile && description.trim()) {
+      showMainButton("Опубликовать", handlePublish)
+    } else {
+      hideMainButton()
+    }
+    return () => {
+      hideMainButton()
+    }
+  }, [step, videoFile, description])
+
+  useEffect(() => {
+    // Request camera on entering record step to speed up UX
+    if (step === "record") {
+      if (navigator?.mediaDevices?.getUserMedia) {
+        requestCamera()
+      }
+    }
+    return () => {
+      // Cleanup media stream on leaving the page/component
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop())
+        mediaStreamRef.current = null
+      }
+      if (videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = null
+      }
+    }
+  }, [step])
+
   const handlePublish = async () => {
     if (!videoFile || !description.trim()) {
       showAlert("Пожалуйста, добавьте описание к видео")
@@ -42,11 +171,9 @@ export default function CreatePage() {
     setIsUploading(true)
     hapticFeedback("medium")
 
-    // Simulate upload process
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Send data back to Telegram bot
       sendData({
         action: "video_published",
         description: description.trim(),
@@ -64,17 +191,6 @@ export default function CreatePage() {
       setIsUploading(false)
     }
   }
-
-  // Set up Telegram main button based on current step
-  useState(() => {
-    if (step === "edit" && videoFile && description.trim()) {
-      showMainButton("Опубликовать", handlePublish)
-    } else {
-      hideMainButton()
-    }
-
-    return () => hideMainButton()
-  }, [step, videoFile, description])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -118,14 +234,30 @@ export default function CreatePage() {
                 </Button>
                 <Button
                   variant="outline"
+                  onClick={isRecording ? stopRecording : startRecording}
                   className="w-full rounded-full py-3 border-gray-200 hover:border-loopy-primary hover:text-loopy-primary bg-transparent"
                 >
                   <Camera className="w-5 h-5 mr-2" />
-                  Записать новое
+                  {isRecording ? "Остановить запись" : "Записать новое"}
                 </Button>
+                {cameraError && <p className="text-sm text-red-600">{cameraError}</p>}
               </div>
 
-              <input ref={fileInputRef} type="file" accept="video/*" onChange={handleFileSelect} className="hidden" />
+              {/* Live preview */}
+              <div className="mt-4">
+                <div className="w-48 h-48 mx-auto rounded-full overflow-hidden bg-black">
+                  <video ref={videoPreviewRef} muted playsInline className="w-full h-full object-cover" />
+                </div>
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="video/*"
+                capture="user"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
             </Card>
 
             {/* Tips */}
@@ -146,7 +278,11 @@ export default function CreatePage() {
             {/* Video Preview */}
             <Card className="p-6 text-center">
               <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                <Video className="w-16 h-16 text-gray-400" />
+                {previewUrl ? (
+                  <video src={previewUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                ) : (
+                  <Video className="w-16 h-16 text-gray-400" />
+                )}
               </div>
               <p className="text-sm text-gray-600 mb-2">Видео выбрано:</p>
               <p className="font-medium text-gray-900">{videoFile.name}</p>
