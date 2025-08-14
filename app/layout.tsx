@@ -22,7 +22,7 @@ const openSans = Open_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Loopy - Capture Life in Circles",
+  title: "LOOPI",
   description: "Share your moments, round and vibrant. Join the loop where every video is a new adventure.",
   generator: "v0.app",
   keywords: ["video", "social media", "circles", "telegram", "mini app", "content creation"],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Loopy - Capture Life in Circles",
+    title: "LOOPI",
     description: "Share your moments, round and vibrant. Join the loop where every video is a new adventure.",
     url: "https://loopy-app.vercel.app",
     siteName: "Loopy",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Loopy - Capture Life in Circles",
+    title: "LOOPI",
     description: "Share your moments, round and vibrant. Join the loop where every video is a new adventure.",
     images: ["/og-image.png"],
   },
@@ -96,14 +96,14 @@ export default function RootLayout({
     <html lang="ru" className={`${montserrat.variable} ${openSans.variable}`}>
       <head>
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
-        <meta name="theme-color" content="#0891b2" />
+        <meta name="theme-color" content="#0B0D10" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Loopy" />
+                  <meta name="apple-mobile-web-app-title" content="LOOPI" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="font-sans antialiased">
+             <body className="font-sans antialiased bg-[#0B0D10] text-white">
         <ErrorBoundary>
           <TelegramProvider>
             {children}
