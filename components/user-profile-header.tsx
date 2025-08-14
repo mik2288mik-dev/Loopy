@@ -50,7 +50,7 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 p-1">
                     {user.avatar ? (
                       <img
-                        src={user.avatar || "/placeholder.svg"}
+                        src={user.avatar}
                         alt={user.displayName}
                         className="w-full h-full rounded-full object-cover"
                       />

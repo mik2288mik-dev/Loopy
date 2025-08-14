@@ -142,7 +142,7 @@ export default function ActivityPage() {
 
                   {activity.videoThumbnail && (
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-white/5 flex-shrink-0 relative group">
-                      <img src={activity.videoThumbnail || "/placeholder.svg"} alt="Video thumbnail" className="w-full h-full object-cover" />
+                      <img src={activity.videoThumbnail} alt="Video thumbnail" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Play className="w-4 h-4 text-white" />
                       </div>

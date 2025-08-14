@@ -3,12 +3,13 @@ import { z } from "zod"
 import { rateLimitPublish } from "@/lib/rate"
 import { db } from "@/lib/db"
 import { getUserId } from "@/lib/auth"
+import { Visibility } from "@/lib/types"
 
 const bodySchema = z.object({
 	mediaUrl: z.string().url(),
 	posterUrl: z.string().url(),
 	duration: z.number().min(1).max(120),
-	visibility: z.enum(["PUBLIC", "FRIENDS", "CLOSE"]),
+	visibility: z.nativeEnum(Visibility),
 	category: z.string().optional(),
 	geo: z.object({ lat: z.number(), lng: z.number() }).optional(),
 })
