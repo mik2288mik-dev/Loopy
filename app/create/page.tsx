@@ -6,14 +6,11 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { TelegramUserInfo } from "@/components/telegram-user-info"
-import { useTelegramContext } from "@/components/telegram-provider"
 import { ArrowLeft, Camera, Video, Upload, Send } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function CreatePage() {
   const router = useRouter()
-  const { showMainButton, hideMainButton, hapticFeedback, sendData, showAlert } = useTelegramContext()
   const [step, setStep] = useState<"record" | "edit" | "publish">("record")
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [description, setDescription] = useState("")
@@ -45,10 +42,8 @@ export default function CreatePage() {
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file)
       setStep("edit")
-      hapticFeedback("success")
     } else {
-      showAlert("Пожалуйста, выберите видео файл")
-      hapticFeedback("error")
+      alert("Пожалуйста, выберите видео файл")
     }
   }
 
@@ -64,7 +59,7 @@ export default function CreatePage() {
     } catch (err: any) {
       const message = err?.message || "Не удалось получить доступ к камере"
       setCameraError(message)
-      showAlert(message)
+      alert(message)
     }
   }
 
@@ -94,16 +89,14 @@ export default function CreatePage() {
         const file = new File([blob], `recording-${Date.now()}.webm`, { type: blob.type })
         setVideoFile(file)
         setStep("edit")
-        hapticFeedback("success")
       }
 
       recorder.start()
       setIsRecording(true)
-      hapticFeedback("light")
     } catch (err: any) {
       const message = err?.message || "Ошибка при начале записи"
       setCameraError(message)
-      showAlert(message)
+      alert(message)
     }
   }
 
@@ -130,63 +123,20 @@ export default function CreatePage() {
     return "video/webm"
   }
 
-  useEffect(() => {
-    // Manage Telegram main button according to step and inputs
-    if (step === "edit" && videoFile && description.trim()) {
-      showMainButton("Опубликовать", handlePublish)
-    } else {
-      hideMainButton()
-    }
-    return () => {
-      hideMainButton()
-    }
-  }, [step, videoFile, description])
-
-  useEffect(() => {
-    // Request camera on entering record step to speed up UX
-    if (step === "record") {
-      if (navigator?.mediaDevices?.getUserMedia) {
-        requestCamera()
-      }
-    }
-    return () => {
-      // Cleanup media stream on leaving the page/component
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((t) => t.stop())
-        mediaStreamRef.current = null
-      }
-      if (videoPreviewRef.current) {
-        videoPreviewRef.current.srcObject = null
-      }
-    }
-  }, [step])
-
   const handlePublish = async () => {
     if (!videoFile || !description.trim()) {
-      showAlert("Пожалуйста, добавьте описание к видео")
-      hapticFeedback("error")
+      alert("Пожалуйста, добавьте описание к видео")
       return
     }
 
     setIsUploading(true)
-    hapticFeedback("medium")
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      sendData({
-        action: "video_published",
-        description: description.trim(),
-        video_size: videoFile.size,
-        video_type: videoFile.type,
-      })
-
-      hapticFeedback("success")
-      showAlert("Видео успешно опубликовано!")
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      alert("Видео успешно опубликовано!")
       router.push("/")
     } catch (error) {
-      hapticFeedback("error")
-      showAlert("Ошибка при публикации видео")
+      alert("Ошибка при публикации видео")
     } finally {
       setIsUploading(false)
     }
@@ -211,9 +161,6 @@ export default function CreatePage() {
       </header>
 
       <div className="max-w-md mx-auto p-4 space-y-6">
-        {/* Telegram User Info */}
-        <TelegramUserInfo />
-
         {step === "record" && (
           <div className="space-y-6">
             {/* Recording Options */}
@@ -320,7 +267,6 @@ export default function CreatePage() {
               </div>
             </Card>
 
-            {/* Publish Button for non-Telegram */}
             <Button
               onClick={handlePublish}
               disabled={!description.trim() || isUploading}

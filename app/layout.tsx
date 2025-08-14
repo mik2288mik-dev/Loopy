@@ -2,7 +2,6 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Montserrat } from "next/font/google"
 import { Open_Sans } from "next/font/google"
-import { TelegramProvider } from "@/components/telegram-provider"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { OfflineIndicator } from "@/components/offline-indicator"
 import "./globals.css"
@@ -95,20 +94,17 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${montserrat.variable} ${openSans.variable}`}>
       <head>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
         <meta name="theme-color" content="#0B0D10" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-                  <meta name="apple-mobile-web-app-title" content="LOOPI" />
+        <meta name="apple-mobile-web-app-title" content="LOOPI" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-             <body className="font-sans antialiased bg-[#0B0D10] text-white">
+      <body className="font-sans antialiased bg-[#0B0D10] text-white">
         <ErrorBoundary>
-          <TelegramProvider>
-            {children}
-            <OfflineIndicator />
-          </TelegramProvider>
+          {children}
+          <OfflineIndicator />
         </ErrorBoundary>
       </body>
     </html>

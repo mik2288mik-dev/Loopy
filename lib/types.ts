@@ -7,18 +7,13 @@ export interface User {
 	isPrivate: boolean
 	showActivity: boolean
 	createdAt: Date
-	// Extended fields
-	verified: boolean
-	creatorLevel: "rookie" | "rising" | "star" | "legend"
-	preferredCategories: string[]
-	timezone: string
-	language: "ru" | "en"
+	preferredCategories?: string[]
 }
 
 export enum Visibility {
-	PUBLIC = "PUBLIC",
-	FRIENDS = "FRIENDS",
-	CLOSE = "CLOSE",
+	PUBLIC = 'PUBLIC',
+	FRIENDS = 'FRIENDS',
+	CLOSE = 'CLOSE',
 }
 
 export interface Video {
@@ -33,32 +28,18 @@ export interface Video {
 	expiresAt: Date
 	shadowed: boolean
 	createdAt: Date
-	// Additions
-	mood?: "energetic" | "chill" | "funny" | "inspiring" | "mysterious"
-	hashtags: string[]
-	location?: {
-		lat: number
-		lng: number
-		name?: string
-	}
-	effects: string[]
-	musicTrack?: string
 	stats: {
 		likes: number
 		views: number
 		comments: number
-		shares: number
-		watchTime: number
 	}
 }
 
 export interface CircleEvent {
 	id: string
-	type: "like" | "follow" | "comment" | "publish" | "milestone" | "trending"
+	type: 'like' | 'follow' | 'comment' | 'publish'
 	actorId: string
 	targetUserId?: string
 	videoId?: string
-	metadata?: Record<string, any>
 	createdAt: Date
-	importance: "low" | "medium" | "high" | "urgent"
 }
