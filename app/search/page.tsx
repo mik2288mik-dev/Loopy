@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { BottomNavigation } from "@/components/bottom-navigation"
+import BottomBar from "@/components/BottomBar"
 import { ArrowLeft, Search, UserPlus, UserCheck, Verified } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -29,7 +29,7 @@ export default function SearchPage() {
     setSearchQuery(query)
     if (query.trim()) {
       setIsSearching(true)
-      // TODO: подключить реальный поиск API
+      // поиск будет подключен к реальному API в следующих релизах
       setSearchResults([])
       setIsSearching(false)
     } else {
@@ -137,8 +137,7 @@ export default function SearchPage() {
         )}
       </div>
 
-      {/* Bottom Navigation */}
-      <BottomNavigation />
+      <BottomBar />
     </div>
   )
 }

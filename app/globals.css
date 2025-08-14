@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #0B0D10;
+  --foreground: oklch(0.985 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -39,9 +39,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Updated Loopy brand colors to unique purple theme */
-  --loopy-primary: #7c3aed;
-  --loopy-accent: #8b5cf6;
-  --loopy-secondary: #a78bfa;
+  --loopy-primary: #F0ABFC;
+  --loopy-accent: #99F6E4;
+  --loopy-secondary: #A78BFA;
   --loopy-light: #f3f4f6;
   --loopy-dark: #374151;
 }
