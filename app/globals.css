@@ -38,11 +38,12 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Added Loopy brand colors */
-  --loopy-primary: #0891b2;
-  --loopy-accent: #ec4899;
-  --loopy-gray-light: #f9fafb;
-  --loopy-gray-dark: #4b5563;
+  /* Updated Loopy brand colors to unique purple theme */
+  --loopy-primary: #7c3aed;
+  --loopy-accent: #8b5cf6;
+  --loopy-secondary: #a78bfa;
+  --loopy-light: #f3f4f6;
+  --loopy-dark: #374151;
 }
 
 .dark {
@@ -118,11 +119,12 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Added Loopy brand color utilities */
+  /* Added new Loopy brand color utilities */
   --color-loopy-primary: var(--loopy-primary);
   --color-loopy-accent: var(--loopy-accent);
-  --color-loopy-gray-light: var(--loopy-gray-light);
-  --color-loopy-gray-dark: var(--loopy-gray-dark);
+  --color-loopy-secondary: var(--loopy-secondary);
+  --color-loopy-light: var(--loopy-light);
+  --color-loopy-dark: var(--loopy-dark);
 
   /* Updated font families for Loopy branding */
   --font-sans: var(--font-open-sans);
@@ -152,7 +154,7 @@
   }
 }
 
-/* Added custom utilities for Loopy */
+/* Enhanced utilities for unique Loopy design */
 @layer utilities {
   .font-heading {
     font-family: var(--font-heading);
@@ -166,12 +168,28 @@
     color: var(--loopy-accent);
   }
 
+  .text-loopy-secondary {
+    color: var(--loopy-secondary);
+  }
+
+  .text-loopy-dark {
+    color: var(--loopy-dark);
+  }
+
   .bg-loopy-primary {
     background-color: var(--loopy-primary);
   }
 
   .bg-loopy-accent {
     background-color: var(--loopy-accent);
+  }
+
+  .bg-loopy-secondary {
+    background-color: var(--loopy-secondary);
+  }
+
+  .bg-loopy-light {
+    background-color: var(--loopy-light);
   }
 
   .border-loopy-primary {
@@ -182,21 +200,42 @@
     background-color: var(--loopy-accent);
   }
 
-  .animate-pulse-gentle {
-    animation: pulse-gentle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  .hover\:bg-loopy-secondary:hover {
+    background-color: var(--loopy-secondary);
   }
 
-  /* Added enhanced animations for better UX */
+  /* Added organic blob shapes for unique design */
+  .organic-blob {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  .organic-blob-alt {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+
+  .flowing-border {
+    border-radius: 25px 15px 20px 10px / 15px 25px 10px 20px;
+  }
+
+  .animate-pulse-gentle {
+    animation: pulse-gentle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   .animate-bounce-gentle {
     animation: bounce-gentle 1s ease-in-out infinite;
   }
 
   .animate-fade-in {
-    animation: fade-in 0.3s ease-out;
+    animation: fade-in 0.5s ease-out;
   }
 
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
+  }
+
+  /* Added floating animation for decorative elements */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
   }
 }
 
@@ -207,28 +246,29 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.02);
+    opacity: 0.8;
+    transform: scale(1.05);
   }
 }
 
-/* Added new keyframe animations */
 @keyframes bounce-gentle {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -240,6 +280,20 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Added floating animation keyframes */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
   }
 }
 

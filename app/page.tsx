@@ -127,23 +127,35 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="font-heading font-black text-2xl text-loopy-primary">Loopy</h1>
+    <div className="min-h-screen bg-gradient-to-br from-white via-loopy-light/30 to-loopy-accent/5 pb-20 relative overflow-hidden">
+      <div className="fixed top-20 right-10 w-32 h-32 bg-loopy-primary/5 organic-blob animate-float opacity-60"></div>
+      <div
+        className="fixed bottom-40 left-5 w-24 h-24 bg-loopy-accent/5 organic-blob-alt animate-float opacity-40"
+        style={{ animationDelay: "3s" }}
+      ></div>
+
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-loopy-primary/10 shadow-sm">
+        <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-loopy-primary to-loopy-accent rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 bg-white rounded-full"></div>
+            </div>
+            <h1 className="font-heading font-black text-2xl bg-gradient-to-r from-loopy-primary to-loopy-accent bg-clip-text text-transparent">
+              Loopy
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/10"
+              className="rounded-full text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/10 transition-all duration-300"
             >
               <Bell className="w-5 h-5" />
             </Button>
             <Button
               size="icon"
               onClick={handleCreateClick}
-              className="rounded-full bg-loopy-primary hover:bg-loopy-accent transition-colors duration-300"
+              className="rounded-full bg-gradient-to-r from-loopy-primary to-loopy-accent hover:from-loopy-accent hover:to-loopy-secondary transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <Plus className="w-5 h-5" />
             </Button>
@@ -157,66 +169,62 @@ export default function HomePage() {
       {/* Category Tabs */}
       <CategoryTabs categories={categories} activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
-      {/* Main content */}
-      <main className="max-w-md mx-auto px-4 py-6">
-        {/* Telegram User Info - show at top if in Telegram */}
+      <main className="max-w-md mx-auto px-4 py-8 relative z-10">
+        {/* Telegram User Info */}
         {isInTelegram && (
-          <div className="mb-6">
+          <div className="mb-8">
             <TelegramUserInfo />
           </div>
         )}
 
-        {/* Welcome message - only show when no search/filter */}
         {searchQuery === "" && activeCategory === "Все" && (
-          <div className="text-center mb-8">
-            <h2 className="font-heading font-bold text-xl text-gray-800 mb-2">Capture Life in Circles</h2>
-            <p className="text-gray-600 text-sm">Share your moments, round and vibrant</p>
-          </div>
-        )}
-
-        {/* Search results info */}
-        {(searchQuery !== "" || activeCategory !== "Все") && (
-          <div className="mb-6">
-            <p className="text-gray-600 text-sm">
-              {filteredVideos.length} видео найдено
-              {searchQuery && ` по запросу "${searchQuery}"`}
-              {activeCategory !== "Все" && ` в категории "${activeCategory}"`}
-            </p>
+          <div className="text-center mb-10 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-loopy-primary/5 via-transparent to-loopy-accent/5 organic-blob opacity-50"></div>
+            <div className="relative z-10 py-8">
+              <h2 className="font-heading font-black text-2xl bg-gradient-to-r from-loopy-primary to-loopy-accent bg-clip-text text-transparent mb-3">
+                Share Your World, One Loop at a Time
+              </h2>
+              <p className="text-loopy-dark/70 text-sm font-medium">Discover endless stories in perfect circles</p>
+            </div>
           </div>
         )}
 
         {/* Video feed */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredVideos.length > 0 ? (
-            filteredVideos.map((video) => (
-              <VideoPostCard
-                key={video.id}
-                post={video}
-                onLike={handleLike}
-                onComment={handleComment}
-                onShare={handleShare}
-                onBookmark={handleBookmark}
-              />
+            filteredVideos.map((video, index) => (
+              <div key={video.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <VideoPostCard
+                  post={video}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                  onShare={handleShare}
+                  onBookmark={handleBookmark}
+                />
+              </div>
             ))
           ) : (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <Plus className="w-8 h-8 text-gray-400" />
+            <div className="text-center py-16 relative">
+              <div className="absolute inset-0 bg-loopy-accent/5 organic-blob opacity-30"></div>
+              <div className="relative z-10">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 flex items-center justify-center animate-pulse-gentle">
+                  <Plus className="w-10 h-10 text-loopy-primary" />
+                </div>
+                <h3 className="font-heading font-bold text-loopy-dark text-lg mb-3">Ничего не найдено</h3>
+                <p className="text-loopy-dark/60 text-sm mb-6 max-w-xs mx-auto leading-relaxed">
+                  Попробуйте изменить поисковый запрос или выберите другую категорию
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setActiveCategory("Все")
+                  }}
+                  className="rounded-full border-loopy-primary/30 text-loopy-primary hover:bg-loopy-primary hover:text-white transition-all duration-300"
+                >
+                  Сбросить фильтры
+                </Button>
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Ничего не найдено</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Попробуйте изменить поисковый запрос или выберите другую категорию
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchQuery("")
-                  setActiveCategory("Все")
-                }}
-                className="rounded-full"
-              >
-                Сбросить фильтры
-              </Button>
             </div>
           )}
         </div>

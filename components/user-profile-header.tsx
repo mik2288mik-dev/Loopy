@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Settings, UserPlus, UserCheck, Share, MoreHorizontal } from "lucide-react"
+import { Settings, UserPlus, UserCheck, Share, MoreHorizontal, Sparkles } from "lucide-react"
 
 interface UserProfileHeaderProps {
   user: {
@@ -35,80 +35,111 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
   }
 
   return (
-    <div className="bg-white border-b border-gray-100">
-      <div className="max-w-md mx-auto px-4 py-6">
-        {/* Avatar and basic info */}
-        <div className="flex items-start gap-4 mb-4">
-          <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 p-1">
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar || "/placeholder.svg"}
-                    alt={user.displayName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold text-gray-600">{user.displayName.charAt(0)}</span>
-                )}
+    <div className="bg-gradient-to-br from-white via-loopy-bg/20 to-white relative overflow-hidden">
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-4 right-8 w-24 h-24 bg-loopy-primary/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-8 left-4 w-32 h-32 bg-loopy-accent/8 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="max-w-md mx-auto px-4 py-8 relative z-10">
+        <div className="text-center mb-6">
+          <div className="relative inline-block mb-4">
+            <div className="relative">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-loopy-primary via-loopy-accent to-loopy-primary p-1 animate-spin-slow">
+                <div className="w-full h-full rounded-full bg-white p-1">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 p-1">
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar || "/placeholder.svg"}
+                        alt={user.displayName}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-loopy-primary to-loopy-accent flex items-center justify-center">
+                        <span className="text-3xl font-bold text-white">{user.displayName.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
+
+              {user.isVerified && (
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-loopy-primary to-loopy-accent rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+              )}
             </div>
-            {user.isVerified && (
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-loopy-primary rounded-full flex items-center justify-center">
-                <span className="text-white text-xs">✓</span>
-              </div>
-            )}
           </div>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h1 className="font-heading font-bold text-xl text-gray-900">{user.displayName}</h1>
+          <div className="mb-4">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <h1 className="font-heading font-bold text-2xl bg-gradient-to-r from-loopy-primary to-loopy-accent bg-clip-text text-transparent">
+                {user.displayName}
+              </h1>
               {user.isVerified && (
-                <Badge variant="secondary" className="text-xs bg-loopy-primary/10 text-loopy-primary">
+                <Badge className="bg-gradient-to-r from-loopy-primary to-loopy-accent text-white border-0 text-xs">
+                  <Sparkles className="w-3 h-3 mr-1" />
                   Verified
                 </Badge>
               )}
             </div>
-            <p className="text-gray-600 text-sm mb-2">@{user.username}</p>
+            <p className="text-loopy-primary/70 text-sm font-medium">@{user.username}</p>
+          </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-4 text-sm">
-              <div className="text-center">
-                <span className="font-semibold text-gray-900">{user.videosCount}</span>
-                <p className="text-gray-600 text-xs">видео</p>
+          <div className="flex items-center justify-center gap-8 mb-6">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 flex items-center justify-center mb-2">
+                <span className="font-heading font-bold text-lg text-loopy-primary">{user.videosCount}</span>
               </div>
-              <div className="text-center">
-                <span className="font-semibold text-gray-900">{followersCount}</span>
-                <p className="text-gray-600 text-xs">подписчиков</p>
+              <p className="text-gray-600 text-xs font-medium">видео</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 flex items-center justify-center mb-2">
+                <span className="font-heading font-bold text-lg text-loopy-primary">{followersCount}</span>
               </div>
-              <div className="text-center">
-                <span className="font-semibold text-gray-900">{user.followingCount}</span>
-                <p className="text-gray-600 text-xs">подписок</p>
+              <p className="text-gray-600 text-xs font-medium">подписчиков</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-loopy-primary/20 to-loopy-accent/20 flex items-center justify-center mb-2">
+                <span className="font-heading font-bold text-lg text-loopy-primary">{user.followingCount}</span>
               </div>
+              <p className="text-gray-600 text-xs font-medium">подписок</p>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={onShare} className="text-gray-600 hover:text-loopy-primary">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onShare}
+              className="rounded-full bg-white/80 backdrop-blur-sm text-loopy-primary hover:text-loopy-accent hover:bg-loopy-primary/10 shadow-lg transition-all duration-300"
+            >
               <Share className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-gray-600 hover:text-loopy-primary">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-white/80 backdrop-blur-sm text-loopy-primary hover:text-loopy-accent hover:bg-loopy-primary/10 shadow-lg transition-all duration-300"
+            >
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
         {/* Bio */}
-        {user.bio && <p className="text-gray-700 text-sm mb-4 leading-relaxed">{user.bio}</p>}
+        {user.bio && (
+          <div className="text-center mb-6">
+            <p className="text-gray-700 text-sm leading-relaxed bg-white/60 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-sm">
+              {user.bio}
+            </p>
+          </div>
+        )}
 
-        {/* Action buttons */}
         <div className="flex gap-3">
           {user.isOwnProfile ? (
             <Button
               onClick={onEdit}
-              variant="outline"
-              className="flex-1 rounded-full border-gray-200 hover:border-loopy-primary hover:text-loopy-primary bg-transparent"
+              className="flex-1 rounded-full bg-gradient-to-r from-loopy-primary/10 to-loopy-accent/10 border border-loopy-primary/30 text-loopy-primary hover:from-loopy-primary hover:to-loopy-accent hover:text-white transition-all duration-300 shadow-lg backdrop-blur-sm"
             >
               <Settings className="w-4 h-4 mr-2" />
               Редактировать
@@ -117,10 +148,10 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
             <>
               <Button
                 onClick={handleFollow}
-                className={`flex-1 rounded-full transition-all ${
+                className={`flex-1 rounded-full transition-all duration-300 shadow-lg ${
                   isFollowing
-                    ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    : "bg-loopy-primary hover:bg-loopy-accent text-white"
+                    ? "bg-white/80 backdrop-blur-sm hover:bg-gray-100 text-gray-700 border border-gray-200"
+                    : "bg-gradient-to-r from-loopy-primary to-loopy-accent hover:from-loopy-accent hover:to-loopy-primary text-white"
                 }`}
               >
                 {isFollowing ? (
@@ -135,10 +166,7 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                className="px-4 rounded-full border-gray-200 hover:border-loopy-primary hover:text-loopy-primary bg-transparent"
-              >
+              <Button className="px-6 rounded-full bg-white/80 backdrop-blur-sm border border-loopy-primary/30 text-loopy-primary hover:bg-loopy-primary/10 transition-all duration-300 shadow-lg">
                 Сообщение
               </Button>
             </>

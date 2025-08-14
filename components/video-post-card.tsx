@@ -91,85 +91,106 @@ export function VideoPostCard({ post, onLike, onComment, onShare, onBookmark }: 
 
   const handleAddComment = (content: string) => {
     console.log("Add comment:", content)
-    // Here you would typically add the comment to your state/API
   }
 
   const handleLikeComment = (commentId: number) => {
     console.log("Like comment:", commentId)
-    // Here you would typically update the comment like state
   }
 
   return (
     <>
-      <Card className="p-4 bg-white shadow-sm border border-gray-100 rounded-2xl hover:shadow-md transition-shadow duration-300">
-        {/* User info */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">{post.author.charAt(0)}</span>
+      <Card className="relative p-6 bg-white/80 backdrop-blur-sm shadow-lg border-0 flowing-border hover:shadow-xl transition-all duration-500 animate-fade-in overflow-hidden">
+        <div className="absolute -top-4 -right-4 w-16 h-16 bg-loopy-accent/10 organic-blob animate-float"></div>
+        <div
+          className="absolute -bottom-2 -left-2 w-12 h-12 bg-loopy-primary/10 organic-blob-alt animate-float"
+          style={{ animationDelay: "2s" }}
+        ></div>
+
+        <div className="flex items-center justify-between mb-6 relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-loopy-primary via-loopy-accent to-loopy-secondary flex items-center justify-center shadow-lg animate-pulse-gentle">
+                <span className="text-white font-bold text-sm">{post.author.charAt(0)}</span>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm">{post.author}</p>
-              <p className="text-gray-500 text-xs">{post.timestamp}</p>
+              <p className="font-heading font-bold text-loopy-dark text-base">{post.author}</p>
+              <p className="text-gray-500 text-xs font-medium">{post.timestamp}</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-            <MoreHorizontal className="w-4 h-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-loopy-primary rounded-full hover:bg-loopy-primary/10 transition-all duration-300"
+          >
+            <MoreHorizontal className="w-5 h-5" />
           </Button>
         </div>
 
-        {/* Video player */}
-        <div className="flex justify-center mb-4">
-          <VideoCirclePlayer src={post.src} poster={post.poster} size="lg" className="mx-auto" />
+        <div className="flex justify-center mb-6 relative">
+          <div className="relative">
+            <VideoCirclePlayer src={post.src} poster={post.poster} size="lg" className="mx-auto shadow-2xl" />
+            <div
+              className="absolute inset-0 rounded-full border-2 border-loopy-accent/20 animate-pulse-gentle"
+              style={{ animationDelay: "0.5s" }}
+            ></div>
+            <div
+              className="absolute -inset-2 rounded-full border border-loopy-primary/10 animate-pulse-gentle"
+              style={{ animationDelay: "1s" }}
+            ></div>
+          </div>
         </div>
 
-        {/* Description */}
-        <p className="text-gray-700 text-sm mb-4 text-center leading-relaxed">{post.description}</p>
+        <div className="text-center mb-6 relative z-10">
+          <p className="text-loopy-dark text-sm leading-relaxed font-medium px-2">{post.description}</p>
+        </div>
 
-        {/* Actions */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-6">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLike}
-              className={`flex items-center gap-2 transition-colors ${
-                isLiked ? "text-loopy-accent hover:text-loopy-accent/80" : "text-gray-600 hover:text-loopy-accent"
+              className={`flex items-center gap-3 rounded-full px-4 py-2 transition-all duration-300 ${
+                isLiked
+                  ? "text-loopy-accent bg-loopy-accent/10 hover:bg-loopy-accent/20"
+                  : "text-gray-600 hover:text-loopy-accent hover:bg-loopy-accent/10"
               }`}
             >
-              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-              <span className="text-sm font-medium">{likesCount}</span>
+              <Heart className={`w-5 h-5 ${isLiked ? "fill-current animate-bounce-gentle" : ""}`} />
+              <span className="text-sm font-bold">{likesCount}</span>
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleComment}
-              className="flex items-center gap-2 text-gray-600 hover:text-loopy-primary transition-colors"
+              className="flex items-center gap-3 text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/10 rounded-full px-4 py-2 transition-all duration-300"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{post.comments}</span>
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-sm font-bold">{post.comments}</span>
             </Button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleBookmark}
-              className={`transition-colors ${
+              className={`rounded-full p-2 transition-all duration-300 ${
                 isBookmarked
-                  ? "text-loopy-primary hover:text-loopy-primary/80"
-                  : "text-gray-600 hover:text-loopy-primary"
+                  ? "text-loopy-primary bg-loopy-primary/10 hover:bg-loopy-primary/20"
+                  : "text-gray-600 hover:text-loopy-primary hover:bg-loopy-primary/10"
               }`}
             >
-              <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />
+              <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onShare?.(post.id)}
-              className="text-gray-600 hover:text-loopy-primary transition-colors"
+              className="text-gray-600 hover:text-loopy-secondary hover:bg-loopy-secondary/10 rounded-full p-2 transition-all duration-300"
             >
-              <Share className="w-4 h-4" />
+              <Share className="w-5 h-5" />
             </Button>
           </div>
         </div>
