@@ -75,6 +75,8 @@ interface TelegramWebApp {
     selectionChanged(): void
   }
   expand(): void
+  disableVerticalSwipe(): void
+  enableVerticalSwipe(): void
   close(): void
   ready(): void
   sendData(data: string): void
@@ -122,6 +124,7 @@ export function useTelegram() {
       // Initialize the app
       tg.ready()
       tg.expand()
+      tg.disableVerticalSwipe()
 
       // Set theme colors
       if (tg.themeParams.bg_color) {
