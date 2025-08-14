@@ -1,0 +1,53 @@
+{
+  "name": "Loopy - Capture Life in Circles",
+  "short_name": "Loopy",
+  "description": "Share your moments, round and vibrant. Join the loop where every video is a new adventure.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0891b2",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ru",
+  "categories": ["social", "entertainment", "photo"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Video",
+      "short_name": "Create",
+      "description": "Create a new video circle",
+      "url": "/create",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "My Profile",
+      "short_name": "Profile",
+      "description": "View your profile",
+      "url": "/profile",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
