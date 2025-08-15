@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import BottomBar from "@/components/BottomBar"
-import { ArrowLeft, Search, UserPlus, UserCheck, Verified } from "lucide-react"
+import { ArrowLeft, Search, UserPlus, UserCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface SearchUser {
@@ -14,7 +14,6 @@ interface SearchUser {
   displayName: string
   bio?: string
   avatar?: string
-  isVerified?: boolean
   followersCount: number
   isFollowing: boolean
 }
@@ -102,7 +101,6 @@ export default function SearchPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold text-gray-900 truncate">{user.displayName}</h3>
-                          {user.isVerified && <Verified className="w-4 h-4 text-loopy-primary flex-shrink-0" />}
                         </div>
                         <p className="text-gray-600 text-sm mb-1">@{user.username}</p>
                         {user.bio && <p className="text-gray-700 text-sm mb-2 line-clamp-2">{user.bio}</p>}

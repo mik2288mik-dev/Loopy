@@ -5,6 +5,7 @@ import BottomBar from "@/components/BottomBar"
 import CircleCard from "@/components/CircleCard"
 import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { getOrCreateLocalUserId } from "@/lib/auth"
 
 const CATEGORIES = ["Все", "Танцы", "Кулинария", "Природа", "Музыка", "Юмор"]
 
@@ -17,7 +18,7 @@ type FeedItem = {
 	category?: string
 	author: { id: string; username?: string; avatar?: string }
 	stats: { likes: number; comments: number }
-	createdAt: string
+	createdAt: Date
 }
 
 type FeedResponse = {
@@ -63,7 +64,7 @@ export default function FeedPage() {
 			url.searchParams.set("mode", mode)
 			if (category && category !== "Все") url.searchParams.set("category", category)
 			if (!reset && cursor) url.searchParams.set("cursor", cursor)
-			const res = await fetch(url.toString(), { cache: "no-store" })
+			const res = await fetch(url.toString(), { cache: "no-store", headers: { "x-loopi-user": getOrCreateLocalUserId() } })
 			if (!res.ok) throw new Error("Сбой загрузки ленты")
 			const data: FeedResponse = await res.json()
 			setItems((prev) => (reset ? data.items : [...prev, ...data.items]))
@@ -77,7 +78,7 @@ export default function FeedPage() {
 
 	const onLike = async (id: string) => {
 		try {
-			const res = await fetch("/api/like", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ videoId: id }) })
+			const res = await fetch("/api/like", { method: "POST", headers: { "Content-Type": "application/json", "x-loopi-user": getOrCreateLocalUserId() }, body: JSON.stringify({ videoId: id }) })
 			if (!res.ok) return
 			const { liked } = await res.json()
 			setItems((prev) => prev.map((it) => (it.id === id ? { ...it, stats: { ...it.stats, likes: it.stats.likes + (liked ? 1 : -1) } } : it)))
@@ -86,7 +87,7 @@ export default function FeedPage() {
 
 	const onSave = async (id: string) => {
 		try {
-			await fetch("/api/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ videoId: id }) })
+			await fetch("/api/save", { method: "POST", headers: { "Content-Type": "application/json", "x-loopi-user": getOrCreateLocalUserId() }, body: JSON.stringify({ videoId: id }) })
 		} catch {}
 	}
 
@@ -95,7 +96,7 @@ export default function FeedPage() {
 			onClick={() => setCategory(name)}
 			className={cn(
 				"px-3 py-1.5 rounded-full text-sm border",
-				category === name ? "bg-gradient-to-r from-[#F0ABFC] to-[#99F6E4] text-black border-transparent" : "border-white/10 text-white/80 hover:bg-white/5"
+				category === name ? "bg-gradient-to-r from-[#F0ABFC] to-[#99F6E4] text-black border-transparent" : "border-white/10 text.white/80 hover:bg-white/5"
 			)}
 			style={{ minHeight: 36 }}
 		>
@@ -122,7 +123,7 @@ export default function FeedPage() {
 				</div>
 			</header>
 
-			<main className="max-w-md mx-auto px-4 py-4">
+			<main className="max-w-md mx.auto px-4 py-4">
 				{error && <div className="text-red-400 text-sm mb-3">{error}</div>}
 				<div className="grid grid-cols-2 gap-4">
 					{items.map((it) => (

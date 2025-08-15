@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Settings, UserPlus, UserCheck, Share, MoreHorizontal, Sparkles } from "lucide-react"
+import { Settings, UserPlus, UserCheck, Share, MoreHorizontal } from "lucide-react"
 
 interface UserProfileHeaderProps {
   user: {
@@ -12,7 +12,6 @@ interface UserProfileHeaderProps {
     displayName: string
     bio?: string
     avatar?: string
-    isVerified?: boolean
     followersCount: number
     followingCount: number
     videosCount: number
@@ -62,12 +61,6 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
                   </div>
                 </div>
               </div>
-
-              {user.isVerified && (
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-loopy-primary to-loopy-accent rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-              )}
             </div>
           </div>
 
@@ -76,12 +69,6 @@ export function UserProfileHeader({ user, onFollow, onEdit, onShare }: UserProfi
               <h1 className="font-heading font-bold text-2xl bg-gradient-to-r from-loopy-primary to-loopy-accent bg-clip-text text-transparent">
                 {user.displayName}
               </h1>
-              {user.isVerified && (
-                <Badge className="bg-gradient-to-r from-loopy-primary to-loopy-accent text-white border-0 text-xs">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Verified
-                </Badge>
-              )}
             </div>
             <p className="text-loopy-primary/70 text-sm font-medium">@{user.username}</p>
           </div>

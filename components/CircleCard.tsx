@@ -11,7 +11,7 @@ export type CircleItem = {
 	category?: string
 	author: { id: string; username?: string; avatar?: string }
 	stats: { likes: number; comments: number }
-	createdAt: string
+	createdAt: Date
 }
 
 export default function CircleCard({ item, onLike, onSave }: { item: CircleItem; onLike?: () => void; onSave?: () => void }) {

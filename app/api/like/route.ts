@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getUserId } from "@/lib/auth"
+import { getRequestUserId } from "@/lib/server-auth"
 
 export async function POST(req: NextRequest) {
-	const userId = await getUserId(req)
+	const userId = getRequestUserId(req)
 	const body: any = await req.json()
 	const { videoId } = body || {}
 	if (!videoId) return NextResponse.json({ error: "videoId required" }, { status: 400 })

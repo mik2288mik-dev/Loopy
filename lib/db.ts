@@ -1,46 +1,59 @@
-import { Visibility } from "@/lib/types"
+import { Visibility, type User, type Video } from "@/lib/types"
 
-// Simple in-memory stores for MVP
-const videos: any[] = []
+// In-memory stores (typed)
+const videos: Array<Video> = []
 const likes = new Set<string>() // `${userId}:${videoId}`
 const saves = new Set<string>()
 const follows = new Set<string>() // `${followerId}:${followingId}`
-const users = new Map<string, any>()
-const settings = new Map<string, any>()
-const reports: { videoId: string; reporterId: string; reason: string; createdAt: number }[] = []
+const users = new Map<string, User>()
+const settings = new Map<string, { privateAccount: boolean; showActivity: boolean; defaultVisibility: Visibility }>()
+const reports: { videoId: string; reporterId: string; reason: string; createdAt: Date }[] = []
 
 function ensureUser(userId: string) {
-	if (!users.has(userId)) users.set(userId, { id: userId, username: userId, displayName: userId, avatar: undefined, bio: "", createdAt: new Date().toISOString() })
+	if (!users.has(userId))
+		users.set(userId, {
+			id: userId,
+			username: userId,
+			displayName: userId,
+			avatar: undefined,
+			bio: "",
+			isPrivate: false,
+			showActivity: true,
+			createdAt: new Date(),
+			preferredCategories: [],
+		})
 	if (!settings.has(userId)) settings.set(userId, { privateAccount: false, showActivity: true, defaultVisibility: Visibility.FRIENDS })
 }
 
 export const db = {
-	async createVideo(input: { authorId: string; mediaUrl: string; posterUrl: string; duration: number; visibility: Visibility; category?: string; expiresAt: Date }) {
+	async createVideo(input: { authorId: string; mediaUrl: string; posterUrl: string; duration: number; visibility: Visibility; category?: string; expiresAt: Date }): Promise<string> {
 		ensureUser(input.authorId)
-		const v = {
+		const v: Video = {
 			id: Math.random().toString(36).slice(2),
 			authorId: input.authorId,
+			author: users.get(input.authorId)!,
 			mediaUrl: input.mediaUrl,
 			posterUrl: input.posterUrl,
 			duration: input.duration,
 			visibility: input.visibility,
 			category: input.category,
-			expiresAt: input.expiresAt.toISOString(),
+			expiresAt: input.expiresAt,
 			shadowed: false,
-			createdAt: new Date().toISOString(),
+			createdAt: new Date(),
+			stats: { likes: 0, views: 0, comments: 0 },
 		}
 		videos.unshift(v)
-		return v.id as string
+		return v.id
 	},
-	async getFeed({ mode, category, cursor, limit, viewerId }: { mode: "global" | "friends"; category?: string; cursor?: string; limit: number; viewerId: string }) {
+	async getFeed({ mode, category, cursor, limit, viewerId }: { mode: "global" | "friends"; category?: string; cursor?: string; limit: number; viewerId: string }): Promise<{ items: Array<Pick<Video, "id" | "mediaUrl" | "posterUrl" | "duration" | "visibility" | "category" | "createdAt"> & { author: Pick<User, "id" | "username" | "avatar">; stats: { likes: number; comments: number } }>; nextCursor?: string }> {
 		const now = Date.now()
-		let items = videos.filter((v) => !v.shadowed && Date.parse(v.expiresAt) > now)
+		let items = videos.filter((v) => !v.shadowed && v.expiresAt.getTime() > now)
 		if (category) items = items.filter((v) => v.category === category)
 		if (mode === "friends") {
 			items = items.filter((v) => follows.has(`${viewerId}:${v.authorId}`) || v.authorId === viewerId)
 		}
 		// simple pagination by createdAt descending
-		items.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+		items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 		let start = 0
 		if (cursor) {
 			const idx = items.findIndex((v) => v.id === cursor)
@@ -61,7 +74,7 @@ export const db = {
 		}))
 		return { items: withStats, nextCursor }
 	},
-	async toggleLike({ userId, videoId }: { userId: string; videoId: string }) {
+	async toggleLike({ userId, videoId }: { userId: string; videoId: string }): Promise<boolean> {
 		const key = `${userId}:${videoId}`
 		if (likes.has(key)) {
 			likes.delete(key)
@@ -70,7 +83,7 @@ export const db = {
 		likes.add(key)
 		return true
 	},
-	async toggleSave({ userId, videoId }: { userId: string; videoId: string }) {
+	async toggleSave({ userId, videoId }: { userId: string; videoId: string }): Promise<boolean> {
 		const key = `${userId}:${videoId}`
 		if (saves.has(key)) {
 			saves.delete(key)
@@ -79,7 +92,7 @@ export const db = {
 		saves.add(key)
 		return true
 	},
-	async toggleFollow({ followerId, followingId }: { followerId: string; followingId: string }) {
+	async toggleFollow({ followerId, followingId }: { followerId: string; followingId: string }): Promise<boolean> {
 		const key = `${followerId}:${followingId}`
 		if (follows.has(key)) {
 			follows.delete(key)
@@ -88,9 +101,9 @@ export const db = {
 		follows.add(key)
 		return true
 	},
-	async getProfile(userId: string) {
+	async getProfile(userId: string): Promise<{ user: User; stats: { followers: number; following: number; videos: number }; videos: Video[]; liked: Video[]; saved: Video[] }> {
 		ensureUser(userId)
-		const user = users.get(userId)
+		const user = users.get(userId)!
 		const vids = videos.filter((v) => v.authorId === userId)
 		const liked = videos.filter((v) => likes.has(`${userId}:${v.id}`))
 		const saved = videos.filter((v) => saves.has(`${userId}:${v.id}`))
@@ -102,22 +115,22 @@ export const db = {
 			saved: saved,
 		}
 	},
-	async updateProfile(userId: string, data: any) {
+	async updateProfile(userId: string, data: Partial<Pick<User, "displayName" | "bio" | "avatar" | "isPrivate" | "showActivity">>): Promise<void> {
 		ensureUser(userId)
-		users.set(userId, { ...users.get(userId), ...data })
+		users.set(userId, { ...users.get(userId)!, ...data })
 	},
-	async getSettings(userId: string) {
+	async getSettings(userId: string): Promise<{ privateAccount: boolean; showActivity: boolean; defaultVisibility: Visibility }> {
 		ensureUser(userId)
-		return settings.get(userId)
+		return settings.get(userId)!
 	},
-	async updateSettings(userId: string, data: any) {
+	async updateSettings(userId: string, data: Partial<{ privateAccount: boolean; showActivity: boolean; defaultVisibility: Visibility }>): Promise<void> {
 		ensureUser(userId)
-		settings.set(userId, { ...settings.get(userId), ...data })
+		settings.set(userId, { ...settings.get(userId)!, ...data })
 	},
-	async addReport({ reporterId, videoId, reason }: { reporterId: string; videoId: string; reason: string }) {
-		reports.push({ reporterId, videoId, reason, createdAt: Date.now() })
+	async addReport({ reporterId, videoId, reason }: { reporterId: string; videoId: string; reason: string }): Promise<void> {
+		reports.push({ reporterId, videoId, reason, createdAt: new Date() })
 		const oneHourAgo = Date.now() - 60 * 60 * 1000
-		const count = reports.filter((r) => r.videoId === videoId && r.createdAt > oneHourAgo).length
+		const count = reports.filter((r) => r.videoId === videoId && r.createdAt.getTime() > oneHourAgo).length
 		if (count >= 3) {
 			const v = videos.find((x) => x.id === videoId)
 			if (v) v.shadowed = true

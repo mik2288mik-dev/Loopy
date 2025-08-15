@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { rateLimitPublish } from "@/lib/rate"
 import { db } from "@/lib/db"
-import { getUserId } from "@/lib/auth"
+import { getRequestUserId } from "@/lib/server-auth"
 import { Visibility } from "@/lib/types"
 
 const bodySchema = z.object({
@@ -16,7 +16,7 @@ const bodySchema = z.object({
 
 export async function POST(req: NextRequest) {
 	try {
-		const userId = await getUserId(req)
+		const userId = getRequestUserId(req)
 		await rateLimitPublish(userId)
 		const json = await req.json()
 		const data = bodySchema.parse(json)
